@@ -1,21 +1,24 @@
 <script setup lang="ts">
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import { useWallet } from './hooks/web3/useWallet'
+import { useERC20 } from './hooks/web3/useErc20'
+import { ref } from 'vue';
+const { onConnect, account } = useWallet()
+const { getBalance: getBusdBalance } = useERC20('busd')
+
+const amount = ref<string | null>(null)
+const getBalance = async () => {
+  if (account.value) {
+    amount.value = await getBusdBalance(account.value)
+  }
+}
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + TypeScript + Vite" />
+  <button @click="onConnect">onConnect</button>
+  <button v-if="account" @click="getBalance">getBalance</button>
+  <p>{{ account }}</p>
+  <p>{{ amount }}</p>
 </template>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>
